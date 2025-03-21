@@ -57,6 +57,7 @@ public class Spline : MonoBehaviour
         for (int i = 1; i < curves.Count; i++)
         {
             curves[i].c1.transform.position = curves[i].knot1.transform.position + (curves[i - 1].c2.transform.position - curves[i].knot1.transform.position) * -1;
+            curves[i].knot1.transform.position = curves[i - 1].knot2.transform.position;
         }
     }
 

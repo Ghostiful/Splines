@@ -43,25 +43,8 @@ public class Coaster : MonoBehaviour
         float t = spline.curves[currentCurve].DistToT(dist);
         transform.position = spline.curves[currentCurve].CubicBezierPoint(t);
         transform.rotation = Quaternion.LookRotation(spline.curves[currentCurve].CalcDerivative(t), Vector3.up);
+        
     }
 
-    public void MoveAlongFullSpline(float dt)
-    {
-        dist += dt * mult;
-        if (dist >= spline.CalcArcLength())
-        {
-            dist -= spline.CalcArcLength();
-        }
-        if (dist >= spline.curves[currentCurve].CalcArcLength())
-        {
-            currentCurve++;
-            if (currentCurve >= spline.curves.Count)
-            {
-                currentCurve = 0;
-            }
-        }
-        float t = spline.DistToT(dist);
-        transform.position = spline.curves[currentCurve].CubicBezierPoint(t - Mathf.Floor(t));
-        transform.rotation = Quaternion.LookRotation(spline.curves[currentCurve].CalcDerivative(t - Mathf.Floor(t)), Vector3.up);
-    }
+
 }
