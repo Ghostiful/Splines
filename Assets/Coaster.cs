@@ -20,11 +20,22 @@ public class Coaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        MoveAlongSpline(Time.deltaTime);
     }
 
-    void MoveAlongCurve(float dt)
+    public void MoveAlongSpline(float dt)
     {
-        
+        t += dt;
+        if (t > 1)
+        {
+            t--;
+            currentCurve++;
+            if (currentCurve >= spline.curves.Count)
+            {
+                currentCurve = 0;
+            }
+        }
+        transform.position = spline.curves[currentCurve].CubicBezierPoint(t);
+        transform.rotation = Quaternion.LookRotation(spline.curves[currentCurve].CalcDerivative(t), Vector3.up);
     }
 }

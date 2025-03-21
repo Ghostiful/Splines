@@ -51,11 +51,20 @@ public class CubicBezierCurve : MonoBehaviour
         return p0 * (1 - t) + t * p1;
     }
 
-    Vector3 CubicBezierPoint(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    public Vector3 CubicBezierPoint(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
         Vector3 a = Lerp(p0, p1, t);
         Vector3 b = Lerp(p1, p2, t);
         Vector3 c = Lerp(p2, p3, t);
+        Vector3 d = Lerp(a, b, t);
+        Vector3 e = Lerp(b, c, t);
+        return Lerp(d, e, t);
+    }
+    public Vector3 CubicBezierPoint(float t)
+    {
+        Vector3 a = Lerp(knot1.transform.position, c1.transform.position, t);
+        Vector3 b = Lerp(c1.transform.position, c2.transform.position, t);
+        Vector3 c = Lerp(c2.transform.position, knot2.transform.position, t);
         Vector3 d = Lerp(a, b, t);
         Vector3 e = Lerp(b, c, t);
         return Lerp(d, e, t);
@@ -84,5 +93,21 @@ public class CubicBezierCurve : MonoBehaviour
             c2.transform.position * (-9 * Mathf.Pow(t, 2) + 6 * t) +
             knot2.transform.position * 3 * Mathf.Pow(t, 2);
     }
+
+    public float CalcArcLength()
+    {
+        float sum = 0;
+        for (int i = 1; i < numSegments; i++)
+        {
+            sum += Vector3.Distance(CubicBezierPoint(i / numSegments), CubicBezierPoint((i - 1) / numSegments));
+        }
+        return sum;
+    }
+
+    //public float DistToT(float[] LUT, float dist)
+    //{
+    //    float arcLength = LUT[LUT.Length - 1];
+    //    int n = LUT.Length;
+    //}
 
 }
