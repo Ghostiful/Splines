@@ -154,6 +154,7 @@ MonoBehaviour:
   curves:
   - {fileID: 231996933}
   curvePrefab: {fileID: 614364610416071892, guid: a2c35e8c039e33b4bbc509cb935ece4f, type: 3}
+  numSegments: 20
 --- !u!4 &51322039
 Transform:
   m_ObjectHideFlags: 0
@@ -399,6 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splineGO: {fileID: 51322037}
+  mult: 5
 --- !u!65 &2005046562
 BoxCollider:
   m_ObjectHideFlags: 0

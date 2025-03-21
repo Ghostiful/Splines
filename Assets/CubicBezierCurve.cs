@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,8 +11,10 @@ public class CubicBezierCurve : MonoBehaviour
     public GameObject knot1;
     public GameObject knot2;
 
-    [SerializeField] int numSegments;
+    public int numSegments;
     public Vector3[] points;
+
+    public float[] LUT;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +25,7 @@ public class CubicBezierCurve : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CalcArcLength();
     }
 
     public CubicBezierCurve(GameObject p0, GameObject p1, GameObject p2, GameObject p3)
@@ -96,18 +99,45 @@ public class CubicBezierCurve : MonoBehaviour
 
     public float CalcArcLength()
     {
-        float sum = 0;
-        for (int i = 1; i < numSegments; i++)
+        float sum = 0f;
+        LUT = new float[numSegments];
+        for (float i = 1; i <= numSegments; i++)
         {
-            sum += Vector3.Distance(CubicBezierPoint(i / numSegments), CubicBezierPoint((i - 1) / numSegments));
+            LUT[(int)i - 1] = sum;
+            if (i != numSegments)
+            {
+                sum += Vector3.Distance(CubicBezierPoint(i / (float)numSegments), CubicBezierPoint((i - 1) / (float)numSegments));
+            }
+            
+            //Debug.DrawLine(CubicBezierPoint(i / (float)numSegments), CubicBezierPoint(i / (float)numSegments) + Vector3.up * (sum - LUT[(int)i-1]));
+            //Debug.Log(i / (float)numSegments);
         }
         return sum;
     }
 
-    //public float DistToT(float[] LUT, float dist)
-    //{
-    //    float arcLength = LUT[LUT.Length - 1];
-    //    int n = LUT.Length;
-    //}
+    public float DistToT(float dist)
+    {
+        float arcLength = LUT[LUT.Length - 1];
+        int n = LUT.Length;
+        if (dist >= 0 && dist <= arcLength)
+        {
+            for (int i = 0; i < n - 1; i++)
+            {
+                if (dist >= LUT[i] && dist <= LUT[i + 1])
+                {
+                    return Remap(dist, LUT[i], LUT[i + 1], (float)i / (n - 1f), ((float)i + 1) / (n - 1f));
+
+                }
+            }
+        }
+
+        return dist / arcLength;
+    }
+
+    float Remap(float x, float a1, float b1, float a2, float b2)
+    {
+        float t = Mathf.InverseLerp(a1, b1, x);
+        return Mathf.Lerp(a2, b2, t);
+    }
 
 }
